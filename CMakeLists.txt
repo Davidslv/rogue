@@ -1,0 +1,81 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+PROJECT(rogue++ C)
+
+INCLUDE(FindCurses)
+
+IF(NOT ${CURSES_FOUND})
+  MESSAGE(FATAL_ERROR "Unable to find ncurses.")
+ENDIF()
+
+# TODO: Generate config.h.
+
+ADD_EXECUTABLE(
+  rogue
+  ${CMAKE_CURRENT_SOURCE_DIR}/armor.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/chase.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/command.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/daemon.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/daemons.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/extern.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/fight.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/init.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/io.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/list.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/mach_dep.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/main.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/mdport.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/misc.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/monsters.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/move.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/new_level.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/options.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/pack.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/passages.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/potions.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/rings.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/rip.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/rooms.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/save.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/scrolls.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/state.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/sticks.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/things.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/vers.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/weapons.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/wizard.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/xcrypt.c
+)
+
+TARGET_INCLUDE_DIRECTORIES(
+  rogue
+  PRIVATE
+    ${CURSES_INCLUDE_DIR}
+)
+
+TARGET_LINK_LIBRARIES(
+  rogue
+  ${CURSES_LIBRARIES}
+)
+
+INSTALL(
+  TARGETS
+    rogue
+  RUNTIME DESTINATION
+    bin
+)
+
+INSTALL(
+  FILES
+    rogue.desktop
+  DESTINATION
+    share/applications
+)
+
+INSTALL(
+  FILES
+    rogue.png
+  DESTINATION
+    share/icons/hicolor/32x32/apps
+)
+
+# TODO: Generate and install man pages.
