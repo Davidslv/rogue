@@ -729,7 +729,7 @@ struct room	*roomin(coord *cp);
 
 extern struct delayed_action {
     int d_type;
-    void (*d_func)();
+    void (*d_func)(int);
     int d_arg;
     int d_time;
 } d_list[MAXDAEMONS];

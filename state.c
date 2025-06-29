@@ -1413,7 +1413,7 @@ rs_read_object_list(FILE *inf, THING **list)
 
     for (i = 0; i < cnt; i++) 
     {
-        l = new_item(sizeof(THING));
+        l = new_item();
 
         memset(l,0,sizeof(THING));
 
