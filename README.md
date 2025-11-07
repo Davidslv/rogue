@@ -33,7 +33,7 @@ make
 ./rogue
 ```
 
-That's it! The game will start and you can begin exploring the dungeon.
+**Note**: The executable name defaults to `rogue`, but may be different if configured with `--with-program-name`. Check the output of `make` to see the actual executable name.
 
 ---
 
@@ -42,6 +42,10 @@ That's it! The game will start and you can begin exploring the dungeon.
 ### Required
 
 - **C Compiler**: GCC or Clang (C89/C90 compatible)
+- **make**: Build automation tool (usually pre-installed)
+  - **Linux**: Usually pre-installed, or `sudo apt-get install build-essential` (Debian/Ubuntu)
+  - **macOS**: Included with Xcode Command Line Tools (`xcode-select --install`)
+  - **FreeBSD**: `pkg install gmake` (or use `gmake` instead of `make`)
 - **ncurses library**: For terminal-based graphics
   - **Linux**: `sudo apt-get install libncurses5-dev` (Debian/Ubuntu)
   - **Linux**: `sudo yum install ncurses-devel` (RHEL/CentOS/Fedora)
@@ -50,9 +54,20 @@ That's it! The game will start and you can begin exploring the dungeon.
 
 ### Optional (for building from source)
 
-- **Autotools**: autoconf, automake (usually pre-installed)
-  - **Linux**: `sudo apt-get install autoconf automake` (Debian/Ubuntu)
-  - **macOS**: Usually pre-installed with Xcode Command Line Tools
+- **Autotools**: autoconf, automake, m4 (needed if `configure` script doesn't exist)
+  - **Linux**: `sudo apt-get install autoconf automake m4` (Debian/Ubuntu)
+  - **Linux**: `sudo yum install autoconf automake m4` (RHEL/CentOS/Fedora)
+  - **macOS**: Usually pre-installed with Xcode Command Line Tools, or `brew install autoconf automake`
+  - **FreeBSD**: `pkg install autoconf automake m4`
+  - **Note**: If the `configure` script already exists in the repository, you don't need these tools
+
+### Optional (for building documentation)
+
+- **Documentation tools**: groff/nroff, tbl, colcrt, sed (for generating man pages and docs)
+  - **Linux**: Usually pre-installed, or `sudo apt-get install groff` (Debian/Ubuntu)
+  - **macOS**: Usually pre-installed
+  - **Note**: Documentation can be built later with `make` if these tools are available
+  - **Note**: Generated documentation (man pages, HTML, etc.) is adapted to match the actual codebase outcomes and build configuration (e.g., executable name, scoreboard file location)
 
 ### Platform Support
 
@@ -68,10 +83,23 @@ This codebase supports multiple platforms:
 
 ### Standard Build (Recommended)
 
-The project uses Autotools for configuration. If you're working from a git repository or source distribution:
+The project uses Autotools for configuration. The build process depends on whether the `configure` script already exists:
 
+**If `configure` script exists** (most common case):
 ```bash
-# Generate configure script (if needed)
+# Configure the build system
+./configure
+
+# Compile
+make
+
+# Optional: Install system-wide (requires root)
+sudo make install
+```
+
+**If `configure` script does NOT exist** (e.g., fresh git clone without generated files):
+```bash
+# Generate configure script (requires autoconf, automake, m4)
 autoreconf -fiv
 
 # Configure the build system
@@ -83,6 +111,10 @@ make
 # Optional: Install system-wide (requires root)
 sudo make install
 ```
+
+**Note**: Most source distributions include the `configure` script, so you typically only need `autoreconf` if you're building directly from a git repository that doesn't include generated files.
+
+**Note**: The executable name and other build outputs are determined by the `configure` script based on the codebase configuration. If you're using `Makefile.std` directly (manual build), the default executable name is `rogue54`, whereas `configure` defaults to `rogue`. Always check the actual output of your build process to confirm the executable name.
 
 ### Configure Options
 
@@ -112,26 +144,45 @@ The `configure` script supports several options:
 
 If you prefer to build manually or the configure script fails:
 
+**Option 1: Using Makefile.std**
 ```bash
-# Edit Makefile.std or create your own Makefile
-# Set appropriate paths and compiler flags
-
-# Build
+# Build using the standard Makefile
 make -f Makefile.std
 
-# Or compile directly:
-gcc -O2 -o rogue *.c -lcurses
+# Note: This creates 'rogue54' by default (see Makefile.std to change)
 ```
 
-**Note**: Manual builds may require additional defines. See `Makefile.std` for reference.
+**Option 2: Direct compilation**
+```bash
+# Compile directly (may need additional defines)
+gcc -O2 -o rogue *.c -lcurses
+
+# Or with more defines (see Makefile.std for full list):
+gcc -O2 -DALLSCORES -DSCOREFILE=\"rogue.scr\" -DLOCKFILE=\"rogue.lck\" -o rogue *.c -lcurses
+```
+
+**Note**:
+- Manual builds may require additional defines. See `Makefile.std` for reference.
+- The executable name may differ (`rogue` vs `rogue54` depending on build method).
+- You may need to adjust include paths if ncurses is in a non-standard location.
 
 ### Windows Build
 
 #### Using Visual Studio
 
-1. Open `rogue54.sln` in Visual Studio
-2. Ensure PDCurses is installed and configured
-3. Build the solution
+1. **Install PDCurses**:
+   - Download PDCurses from https://pdcurses.org/
+   - Extract to a directory (e.g., `C:\pdcurses`)
+   - Build PDCurses library following its instructions
+
+2. **Configure Visual Studio project**:
+   - Open `rogue54.sln` in Visual Studio
+   - Update include/library paths in project settings to point to your PDCurses installation
+   - Ensure PDCurses library is linked (check project properties → Linker → Input)
+
+3. **Build the solution**: Build → Build Solution (or press F7)
+
+**Alternative**: If PDCurses is in a peer directory (`../pdcurses/`), the project may work without modification.
 
 #### Using MinGW/MSYS2
 
@@ -143,6 +194,8 @@ pacman -S mingw-w64-x86_64-ncurses
 ./configure
 make
 ```
+
+**Note**: For MinGW/MSYS2, you may need to use `mingw32-make` instead of `make` depending on your installation.
 
 ---
 
@@ -206,32 +259,42 @@ command.c            # Command processing and input handling
 
 ### Game Systems
 
+**Note**: All source files are in the root directory. The structure below is logical grouping, not actual directory structure.
+
+**Combat System**:
 ```
-combat/
-├── fight.c          # Combat mechanics
-├── weapons.c        # Weapon types and properties
-└── armor.c          # Armor types and properties
+fight.c          # Combat mechanics
+weapons.c        # Weapon types and properties
+armor.c          # Armor types and properties
+```
 
-monsters/
-├── monsters.c       # Monster definitions and stats
-└── chase.c          # Monster AI and pathfinding
+**Monster System**:
+```
+monsters.c       # Monster definitions and stats
+chase.c          # Monster AI and pathfinding
+```
 
-items/
-├── potions.c        # Potion types and effects
-├── scrolls.c        # Scroll types and effects
-├── rings.c          # Ring types and effects
-├── sticks.c         # Wand/staff types and effects
-└── things.c         # General item handling
+**Item System**:
+```
+potions.c        # Potion types and effects
+scrolls.c        # Scroll types and effects
+rings.c          # Ring types and effects
+sticks.c         # Wand/staff types and effects
+things.c         # General item handling
+```
 
-dungeon/
-├── rooms.c          # Room generation
-├── passages.c       # Corridor generation
-└── new_level.c      # Level creation and initialization
+**Dungeon Generation**:
+```
+rooms.c          # Room generation
+passages.c       # Corridor generation
+new_level.c      # Level creation and initialization
+```
 
-ui/
-├── io.c             # Input/output handling
-├── list.c           # Inventory and object lists
-└── rip.c            # Death screen
+**User Interface**:
+```
+io.c             # Input/output handling
+list.c           # Inventory and object lists
+rip.c            # Death screen
 ```
 
 ### Supporting Systems
@@ -448,16 +511,26 @@ sudo yum install ncurses-devel
 brew install ncurses
 ```
 
-**Problem**: `autoreconf: command not found`
+**Problem**: `autoreconf: command not found` or `autoconf: command not found`
 
-**Solution**: Install autotools:
+**Solution**: Install autotools (only needed if `configure` script doesn't exist):
 ```bash
 # Debian/Ubuntu
-sudo apt-get install autoconf automake
+sudo apt-get install autoconf automake m4
+
+# RHEL/CentOS/Fedora
+sudo yum install autoconf automake m4
 
 # macOS (usually pre-installed with Xcode)
 xcode-select --install
+# Or via Homebrew:
+brew install autoconf automake
+
+# FreeBSD
+pkg install autoconf automake m4
 ```
+
+**Note**: If the `configure` script already exists, you don't need these tools. Only run `autoreconf` if you're building from a git repository without generated files.
 
 **Problem**: Compilation errors about undefined functions
 
@@ -466,6 +539,45 @@ xcode-select --install
 ./configure
 make clean
 make
+```
+
+**Problem**: `make: command not found`
+
+**Solution**: Install make:
+```bash
+# Debian/Ubuntu
+sudo apt-get install build-essential
+
+# RHEL/CentOS/Fedora
+sudo yum groupinstall "Development Tools"
+
+# macOS
+xcode-select --install
+
+# FreeBSD (use gmake)
+pkg install gmake
+# Then use: gmake instead of make
+```
+
+**Problem**: `configure: error: cannot find install-sh or install.sh`
+
+**Solution**: The `install-sh` script should be in the repository. If missing, you may need to regenerate it:
+```bash
+autoreconf -fiv
+```
+
+**Problem**: Documentation build fails (missing groff/nroff/tbl)
+
+**Solution**: Documentation tools are optional. The game will build without them, but man pages won't be generated:
+```bash
+# Install documentation tools (optional)
+# Debian/Ubuntu
+sudo apt-get install groff
+
+# RHEL/CentOS/Fedora
+sudo yum install groff
+
+# Or skip documentation generation - the game will still build
 ```
 
 ### Runtime Issues
@@ -494,9 +606,25 @@ sudo chmod 664 rogue.scr
 
 **Windows (MinGW)**: Ensure PDCurses is properly linked. Check `LIBS` in Makefile.
 
-**macOS**: If using Homebrew ncurses, you may need:
+**macOS**: If using Homebrew ncurses, you may need to specify include/library paths:
 ```bash
+# For Intel Macs (Homebrew in /usr/local)
 ./configure CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+
+# For Apple Silicon Macs (Homebrew in /opt/homebrew)
+./configure CPPFLAGS="-I/opt/homebrew/include" LDFLAGS="-L/opt/homebrew/lib"
+
+# Or let pkg-config find it (if available)
+./configure PKG_CONFIG_PATH="/opt/homebrew/lib/pkgconfig"
+```
+
+**Alternative**: If ncurses is installed but not found, you can also try:
+```bash
+# Check where ncurses is installed
+brew --prefix ncurses
+
+# Use that path in configure
+./configure CPPFLAGS="-I$(brew --prefix ncurses)/include" LDFLAGS="-L$(brew --prefix ncurses)/lib"
 ```
 
 **Cygwin**: Ensure you're using the Cygwin version of ncurses, not a Windows port.
