@@ -66,9 +66,9 @@ main(int argc, char **argv, char **envp)
 
     open_score();
 
-	/* 
-     * Drop setuid/setgid after opening the scoreboard file. 
-     */ 
+	/*
+     * Drop setuid/setgid after opening the scoreboard file.
+     */
 
     md_normaluser();
 
@@ -192,7 +192,7 @@ rnd(int range)
  * roll:
  *	Roll a number of dice
  */
-int 
+int
 roll(int number, int sides)
 {
     int dtotal = 0;
@@ -237,9 +237,8 @@ tstp(int ignored)
     wrefresh(curscr);
     getyx(curscr, y, x);
     mvcur(y, x, oy, ox);
+    move(oy, ox);  /* Use public API instead of internal structure access */
     fflush(stdout);
-    curscr->_cury = oy;
-    curscr->_curx = ox;
 }
 
 /*

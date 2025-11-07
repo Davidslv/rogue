@@ -112,9 +112,19 @@ tstp(int ignored)
 
 ## Next Steps
 
-1. **Code Fix Required**: The `main.c` file needs to be updated to remove direct access to internal ncurses structure members
+1. ~~**Code Fix Required**: The `main.c` file needs to be updated to remove direct access to internal ncurses structure members~~ ✅ **FIXED**
 2. **Testing**: After fix, verify the game builds and runs correctly
 3. **Documentation**: Update README with any workarounds or fixes applied
+
+## Fix Applied (2025)
+
+The critical build issue has been resolved:
+
+**Fixed in**: `main.c:241-242`
+
+**Solution**: Removed direct access to internal ncurses structure members (`curscr->_cury` and `curscr->_curx`) and replaced with public API call `move(oy, ox)`. The `mvcur()` call already handles terminal cursor positioning, and `move()` ensures the logical cursor position is also set using the public ncurses API.
+
+**Status**: ✅ Build should now succeed on modern systems with standard ncurses libraries.
 
 ## Additional Notes
 
