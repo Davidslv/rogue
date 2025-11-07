@@ -72,7 +72,7 @@ move(oy, ox);  /* Use public API instead of internal structure access */
 2. Function pointers without proper prototypes
 3. Local function declaration conflicting with standard library
 
-**Root Cause**: 
+**Root Cause**:
 - Pre-C99 code used old-style function declarations
 - C23 requires proper function prototypes
 - Function pointers need explicit parameter types
@@ -126,37 +126,11 @@ move(oy, ox);  /* Use public API instead of internal structure access */
 
 ## Pending Issues
 
-Issues identified but not yet fixed:
+Issues identified but not yet fixed (low priority - build works correctly):
 
-### 1. Function Prototype Warnings (C23 Compatibility)
+### 1. ~~Function Prototype Warnings (C23 Compatibility)~~ ✅ FIXED
 
-**Severity**: Medium (warnings only, build succeeds)
-
-**Issue**: Multiple functions declared without prototypes in `extern.h`, causing C23 compatibility warnings.
-
-**Affected Functions**:
-- `fatal()` - declared as `void fatal();` but defined as `void fatal(char *s)`
-- `my_exit()` - declared as `void my_exit();` but defined as `void my_exit(int st)`
-- `set_order()` - declared as `void set_order();` but defined as `void set_order(int *order, int numthings)`
-- Function pointer calls in `daemon.c` - `(*dev->d_func)(dev->d_arg)` without prototype
-
-**Impact**:
-- Build succeeds but generates warnings
-- Will fail to compile with C23 standard
-- Function calls may have incorrect argument checking
-
-**Files Affected**:
-- `extern.h` - function declarations
-- `main.c` - calls to `fatal()` and `my_exit()`
-- `daemon.c` - function pointer calls
-- `state.c` - call to `new_item()`
-- `things.c` - call to `set_order()`
-- `rip.c` - call to `my_exit()`
-
-**Solution Approach**:
-1. Add proper function prototypes to `extern.h` with correct parameter types
-2. Ensure all function definitions match their declarations
-3. Fix function pointer type definitions in daemon structures
+**Status**: All function prototype warnings have been resolved in Iteration 2.
 
 ### 2. Deprecated `register` Keyword
 
