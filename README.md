@@ -35,6 +35,8 @@ make
 
 **Note**: The executable name defaults to `rogue`, but may be different if configured with `--with-program-name`. Check the output of `make` to see the actual executable name.
 
+**Note**: If you encounter compilation errors, especially related to ncurses compatibility, see [BUILD_ISSUES.md](BUILD_ISSUES.md) for known issues and workarounds.
+
 ---
 
 ## Prerequisites
@@ -495,6 +497,8 @@ When reporting bugs, please include:
 
 ## Troubleshooting
 
+**Note**: For detailed information about known build issues, especially on modern systems, see [BUILD_ISSUES.md](BUILD_ISSUES.md).
+
 ### Build Issues
 
 **Problem**: `configure: error: curses library not found`
@@ -540,6 +544,10 @@ pkg install autoconf automake m4
 make clean
 make
 ```
+
+**Problem**: Compilation errors about incomplete type 'WINDOW' or `curscr->_cury` / `curscr->_curx`
+
+**Solution**: This is a known compatibility issue with modern ncurses. The codebase attempts to access internal ncurses structure members that are not available in modern ncurses libraries. See [BUILD_ISSUES.md](BUILD_ISSUES.md) for detailed information about this issue and potential fixes.
 
 **Problem**: `make: command not found`
 
