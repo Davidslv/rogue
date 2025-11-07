@@ -11,7 +11,7 @@ This document tracks all modernization changes made to bring the Rogue codebase 
 
 ## Change Log
 
-### 2025-01-XX: Fix ncurses Internal Structure Access
+### 2025-11-07: Fix ncurses Internal Structure Access
 
 **Issue**: Build failure due to accessing internal ncurses structure members
 
