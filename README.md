@@ -24,6 +24,8 @@
 
 ## Quick Start
 
+**Before you begin**: Make sure you have installed all [required prerequisites](#prerequisites) (C compiler, make, and ncurses development library).
+
 ```bash
 # Configure and build
 ./configure
@@ -37,22 +39,36 @@ make
 
 **Note**: If you encounter compilation errors, especially related to ncurses compatibility, see [BUILD_ISSUES.md](BUILD_ISSUES.md) for known issues and workarounds.
 
+**Troubleshooting**: If `./configure` fails with "curses library not found", you need to install the ncurses development package (see [Prerequisites](#prerequisites)).
+
 ---
 
 ## Prerequisites
 
 ### Required
 
-- **C Compiler**: GCC or Clang (C89/C90 compatible)
-- **make**: Build automation tool (usually pre-installed)
-  - **Linux**: Usually pre-installed, or `sudo apt-get install build-essential` (Debian/Ubuntu)
-  - **macOS**: Included with Xcode Command Line Tools (`xcode-select --install`)
-  - **FreeBSD**: `pkg install gmake` (or use `gmake` instead of `make`)
-- **ncurses library**: For terminal-based graphics
-  - **Linux**: `sudo apt-get install libncurses5-dev` (Debian/Ubuntu)
-  - **Linux**: `sudo yum install ncurses-devel` (RHEL/CentOS/Fedora)
-  - **macOS**: `brew install ncurses` (Homebrew)
-  - **FreeBSD**: `pkg install ncurses`
+Before building, you need:
+
+1. **C Compiler**: GCC or Clang (C89/C90 compatible)
+   - **Linux**: Usually pre-installed, or `sudo apt-get install build-essential` (Debian/Ubuntu)
+   - **Linux**: `sudo yum groupinstall "Development Tools"` (RHEL/CentOS/Fedora)
+   - **macOS**: Included with Xcode Command Line Tools (`xcode-select --install`)
+   - **FreeBSD**: `pkg install gcc` or `pkg install clang`
+
+2. **make**: Build automation tool
+   - **Linux**: Usually pre-installed, or `sudo apt-get install build-essential` (Debian/Ubuntu)
+   - **Linux**: `sudo yum groupinstall "Development Tools"` (RHEL/CentOS/Fedora)
+   - **macOS**: Included with Xcode Command Line Tools (`xcode-select --install`)
+   - **FreeBSD**: `pkg install gmake` (or use `gmake` instead of `make`)
+
+3. **ncurses development library**: For terminal-based graphics (includes headers and library)
+   - **Linux (Debian/Ubuntu)**: `sudo apt-get install libncurses-dev` or `libncurses5-dev` (for older systems)
+   - **Linux (RHEL/CentOS)**: `sudo yum install ncurses-devel`
+   - **Linux (Fedora)**: `sudo dnf install ncurses-devel`
+   - **macOS**: `brew install ncurses` (Homebrew)
+   - **FreeBSD**: `pkg install ncurses`
+
+**Important**: You need the **development** package (with `-dev` or `-devel` in the name), not just the runtime library. The development package includes the header files (`curses.h`) required for compilation.
 
 ### Optional (for building from source)
 
@@ -501,19 +517,29 @@ When reporting bugs, please include:
 
 ### Build Issues
 
-**Problem**: `configure: error: curses library not found`
+**Problem**: `configure: error: curses library not found` or similar ncurses-related errors
 
-**Solution**: Install ncurses development package:
+**Solution**: Install the ncurses **development** package (includes headers):
 ```bash
 # Debian/Ubuntu
+sudo apt-get install libncurses-dev
+# Or for older systems:
 sudo apt-get install libncurses5-dev
 
-# RHEL/CentOS/Fedora
+# RHEL/CentOS
 sudo yum install ncurses-devel
+
+# Fedora
+sudo dnf install ncurses-devel
 
 # macOS
 brew install ncurses
+
+# FreeBSD
+pkg install ncurses
 ```
+
+**Important**: You need the development package (with `-dev` or `-devel` in the name), not just the runtime library. The development package includes the header files (`curses.h`) required for compilation.
 
 **Problem**: `autoreconf: command not found` or `autoconf: command not found`
 
@@ -614,7 +640,7 @@ sudo chmod 664 rogue.scr
 
 **Windows (MinGW)**: Ensure PDCurses is properly linked. Check `LIBS` in Makefile.
 
-**macOS**: If using Homebrew ncurses, you may need to specify include/library paths:
+**macOS**: If using Homebrew ncurses and `configure` cannot find it automatically, you may need to specify include/library paths:
 ```bash
 # For Intel Macs (Homebrew in /usr/local)
 ./configure CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
@@ -622,18 +648,14 @@ sudo chmod 664 rogue.scr
 # For Apple Silicon Macs (Homebrew in /opt/homebrew)
 ./configure CPPFLAGS="-I/opt/homebrew/include" LDFLAGS="-L/opt/homebrew/lib"
 
+# Or automatically detect Homebrew ncurses location
+./configure CPPFLAGS="-I$(brew --prefix ncurses)/include" LDFLAGS="-L$(brew --prefix ncurses)/lib"
+
 # Or let pkg-config find it (if available)
 ./configure PKG_CONFIG_PATH="/opt/homebrew/lib/pkgconfig"
 ```
 
-**Alternative**: If ncurses is installed but not found, you can also try:
-```bash
-# Check where ncurses is installed
-brew --prefix ncurses
-
-# Use that path in configure
-./configure CPPFLAGS="-I$(brew --prefix ncurses)/include" LDFLAGS="-L$(brew --prefix ncurses)/lib"
-```
+**Note**: If you just installed ncurses via Homebrew, the `configure` script should usually find it automatically. Only use these options if `configure` reports that it cannot find the curses library.
 
 **Cygwin**: Ensure you're using the Cygwin version of ncurses, not a Windows port.
 
