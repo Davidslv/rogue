@@ -230,7 +230,6 @@ death(char monst)
     char **dp, *killer;
     struct tm *lt;
     static time_t date;
-    struct tm *localtime();
 
     signal(SIGINT, SIG_IGN);
     purse -= purse / 10;

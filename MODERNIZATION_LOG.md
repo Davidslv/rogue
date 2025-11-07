@@ -25,7 +25,7 @@ curscr->_curx = ox;  // ERROR: Internal member access
 
 The code attempted to directly access internal ncurses structure members (`curscr->_cury` and `curscr->_curx`), which are not part of the public API in modern ncurses libraries. This caused compilation errors on all modern systems.
 
-**Root Cause**: 
+**Root Cause**:
 - Modern ncurses (6.x) hides internal structure members
 - The `WINDOW` structure is opaque in modern implementations
 - Direct structure member access was possible in older ncurses versions (pre-1999)
@@ -58,6 +58,69 @@ move(oy, ox);  /* Use public API instead of internal structure access */
 - [ ] Test on multiple platforms (Linux)
 
 **Status**: ✅ **COMPLETE** - Build now succeeds on modern systems
+
+---
+
+### 2025-01-XX: Fix Function Prototype Warnings (C23 Compatibility)
+
+**Issue**: Multiple functions declared without prototypes, causing C23 compatibility warnings
+
+**Location**: Multiple files
+
+**Problem**:
+1. Functions declared as `void func();` (old-style) but defined with parameters
+2. Function pointers without proper prototypes
+3. Local function declaration conflicting with standard library
+
+**Root Cause**: 
+- Pre-C99 code used old-style function declarations
+- C23 requires proper function prototypes
+- Function pointers need explicit parameter types
+
+**Solution**:
+
+1. **Fixed function prototypes in `extern.h`**:
+   - `void fatal();` → `void fatal(char *s);`
+   - `void my_exit();` → `void my_exit(int st);`
+   - `void set_order();` → `void set_order(int *order, int numthings);`
+
+2. **Fixed function pointer types**:
+   - `void (*d_func)();` → `void (*d_func)(int);` in `rogue.h` and `daemon.c`
+   - `void (*func)();` → `void (*func)(int);` in `fuse()` and `start_daemon()`
+   - `void (*pa_daemon)();` → `void (*pa_daemon)(int);` in `potions.c`
+
+3. **Removed conflicting local declaration**:
+   - Removed `struct tm *localtime();` from `rip.c` (conflicts with `<time.h>`)
+
+4. **Fixed incorrect function call**:
+   - `new_item(sizeof(THING))` → `new_item()` in `state.c` (function doesn't take parameters)
+
+**Reasoning**:
+- Modern C standards require proper function prototypes
+- Function pointers must match their call sites
+- Local declarations shouldn't conflict with standard library
+- Functions should be called with correct number of arguments
+
+**Impact**:
+- ✅ Eliminates all C23 compatibility warnings
+- ✅ Build now compiles with zero warnings
+- ✅ Better type safety and error checking
+- ✅ No functional changes - all functions work as before
+
+**Files Changed**:
+- `extern.h` - function declarations
+- `rogue.h` - function pointer types in struct and function signatures
+- `daemon.c` - function pointer parameters
+- `potions.c` - function pointer in struct
+- `rip.c` - removed conflicting localtime declaration
+- `state.c` - fixed incorrect function call
+
+**Testing**:
+- [x] Verify build succeeds ✅
+- [x] Zero compilation warnings ✅
+- [x] Executable created successfully ✅
+
+**Status**: ✅ **COMPLETE** - Build now compiles with zero warnings
 
 ---
 
@@ -122,7 +185,7 @@ Issues identified but not yet fixed:
 - [x] Builds successfully on macOS ✅
 - [ ] Builds successfully on Linux
 - [x] No compilation errors ✅
-- [ ] No compilation warnings (currently 10+ warnings documented above)
+- [x] No compilation warnings ✅ (All warnings fixed!)
 
 ---
 

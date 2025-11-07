@@ -567,7 +567,7 @@ char	floor_at();
 void	flush_type();
 int	fight(coord *mp, THING *weap, bool thrown);
 void	fix_stick(THING *cur);
-void	fuse(void (*func)(), int arg, int time, int type);
+void	fuse(void (*func)(int), int arg, int time, int type);
 bool	get_dir();
 int	gethand();
 void	give_pack(THING *tp);
@@ -651,7 +651,7 @@ void	show_map();
 void	show_win(char *message);
 int	sign(int nm);
 int	spread(int nm);
-void	start_daemon(void (*func)(), int arg, int type);
+void	start_daemon(void (*func)(int), int arg, int type);
 void	start_score();
 void	status();
 int	step_ok(int ch);
@@ -729,7 +729,7 @@ struct room	*roomin(coord *cp);
 
 extern struct delayed_action {
     int d_type;
-    void (*d_func)();
+    void (*d_func)(int);
     int d_arg;
     int d_time;
 } d_list[MAXDAEMONS];

@@ -63,7 +63,7 @@ find_slot(void (*func)())
  *	Start a daemon, takes a function.
  */
 void
-start_daemon(void (*func)(), int arg, int type)
+start_daemon(void (*func)(int), int arg, int type)
 {
     register struct delayed_action *dev;
 
@@ -117,7 +117,7 @@ do_daemons(int flag)
  *	Start a fuse to go off in a certain number of turns
  */
 void
-fuse(void (*func)(), int arg, int time, int type)
+fuse(void (*func)(int), int arg, int time, int type)
 {
     register struct delayed_action *wire;
 

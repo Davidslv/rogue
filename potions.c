@@ -17,7 +17,7 @@
 typedef struct
 {
     int pa_flags;
-    void (*pa_daemon)();
+    void (*pa_daemon)(int);
     int pa_time;
     char *pa_high, *pa_straight;
 } PACT;
