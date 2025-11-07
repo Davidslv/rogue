@@ -8,6 +8,23 @@
 
 ---
 
+## ⚠️ About This Repository ⚠️
+
+**November 2025**:
+
+I want to express my sincere appreciation to everyone who has contributed to this repository, attempted to fix issues, and forked the project over the years. When I originally created this repository in [July 2016](https://github.com/Davidslv/rogue/releases/tag/5.4.4), I was young and fascinated by this classic game. My primary intention was to archive the codebase for learning purposes, and I never expected the community engagement that followed.
+
+**Important**: I am not one of the original authors of Rogue. I am simply maintaining this repository as an archive of the original game.
+
+**Repository Policy**:
+- The **`main` branch** will remain unchanged to preserve the game exactly as it was in 1999. This ensures the original codebase remains available in its historical state.
+- For modernization efforts, bug fixes, and improvements, please use the branch: **[modern-rogue](https://github.com/Davidslv/rogue/tree/modern-rogue)**
+- You are welcome to fork this repository and make your own modifications. Many have done so over the years, and I encourage continued development in your own forks.
+
+Thank you for your interest in preserving and improving this classic game! ❤️
+
+---
+
 ## Table of Contents
 
 - [Quick Start](#quick-start)
