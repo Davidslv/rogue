@@ -608,7 +608,8 @@ xcrypt(const char *key, const char *setting)
 	 */
 	q = (unsigned char *) keybuf;
 	while ((q - (unsigned char *) keybuf) < sizeof(keybuf)) {
-		if ((*q++ = *key << 1))
+		*q++ = *key << 1;
+		if (*key)
 			key++;
 	}
 	if (des_setkey((const char *) keybuf))
