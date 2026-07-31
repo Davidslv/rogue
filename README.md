@@ -95,6 +95,8 @@ This codebase supports multiple platforms:
 - **DOS** (DJGPP)
 - **Cygwin**
 
+AArch64 GNU/Linux systems use the standard `./configure` and `make` build process. No architecture-specific build flags are required for a native build.
+
 ---
 
 ## Building from Source

@@ -1,0 +1,40 @@
+# Autotools / configure generated files
+Makefile
+config.h
+config.log
+config.status
+stamp-h1
+autom4te.cache/
+
+# Generated docs/configured outputs
+rogue.6
+rogue.cat
+rogue.doc
+rogue.html
+rogue.me
+
+# Build artifacts
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+
+# Rogue binaries and runtime files
+rogue
+rogue54
+*.lck
+*.scr
+
+# Common temp/debug files
+*~
+*.swp
+*.swo
+core
+
+# Nix build outputs
+result
+result-*
