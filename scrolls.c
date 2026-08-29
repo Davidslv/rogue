@@ -149,7 +149,13 @@ read_scroll()
 	case S_ID_ARMOR:
 	case S_ID_R_OR_S:
 	{
-	    static char id_type[S_ID_R_OR_S + 1] =
+	    /* signed: R_OR_S is negative (-2) and must sign-extend correctly
+	     * when read back into `int type` below. Plain `char` is unsigned
+	     * by default on some platforms (e.g. aarch64), which silently
+	     * turns R_OR_S into 254 and breaks the ring/stick filter in
+	     * inventory() (pack.c), making the '*' list always report
+	     * "you don't have anything appropriate" for this scroll. */
+	    static signed char id_type[S_ID_R_OR_S + 1] =
 		{ 0, 0, 0, 0, 0, POTION, SCROLL, WEAPON, ARMOR, R_OR_S };
 	    /*
 	     * Identify, let him figure something out

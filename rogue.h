@@ -315,7 +315,11 @@
  * Help list
  */
 struct h_list {
-    char h_ch;
+    signed char h_ch;	/* signed: some tables store the negative
+			 * sentinels CALLABLE/R_OR_S here, which must
+			 * sign-extend correctly when compared against
+			 * `int type` (plain char is unsigned by default
+			 * on some platforms, e.g. aarch64) */
     char *h_desc;
     bool h_print;
 };
